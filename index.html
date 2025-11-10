@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EcoSphere</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="logo.png" />
+    <!-- Improved typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Enhanced Splash overlay styles */
+        .splash-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(16, 185, 129, 0.1), transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(34, 197, 94, 0.08), transparent 50%),
+                linear-gradient(135deg, rgba(240, 255, 244, 0.95), rgba(220, 252, 231, 0.98));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 10000;
+            transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1), visibility 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .splash-card { 
+            text-align: center; 
+            padding: 3rem; 
+            border-radius: 24px; 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 25px 80px rgba(16, 185, 129, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.2); 
+            max-width: 520px; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .splash-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            animation: splash-rotate 8s linear infinite;
+        }
+        
+        @keyframes splash-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .splash-card .logo-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin: 0 auto 1rem;
+            display: block;
+            position: relative;
+            z-index: 1;
+            animation: logo-pulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes logo-pulse {
+            from { transform: scale(1); filter: drop-shadow(0 10px 20px rgba(16, 185, 129, 0.2)); }
+            to { transform: scale(1.05); filter: drop-shadow(0 15px 30px rgba(16, 185, 129, 0.3)); }
+        }
+        
+        .splash-card h1 {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 0.75rem;
+            font-size: 2rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .splash-card p {
+            color: var(--text-secondary);
+            margin: 0 0 1.5rem;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .splash-enter {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .splash-enter::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+            transform: translate(-50%, -50%);
+        }
+        
+        .splash-enter:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .splash-enter:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+        
+        .splash-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Overlay (shown on initial load) -->
+    <div id="splash" class="splash-overlay">
+        <div class="splash-card" role="dialog" aria-label="Welcome to EcoSphere">
+            <img id="splashLogo" src="iner.png" alt="EcoSphere logo" class="logo-img" tabindex="0" style="cursor:pointer">
+            <h1>EcoSphere</h1>
+            <p>Smart, simple reporting for cleaner streets. Click the logo or the button to enter the app.</p>
+            <button id="enterBtn" class="splash-enter">Enter the app →</button>
+        </div>
+    </div>
+
+    <!-- App content (hidden underneath the splash). The full app markup follows. -->
+    <div id="app" aria-hidden="true">
+        <!-- Navigation Bar -->
+        <header class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="iner.png" alt="EcoSphere logo" class="logo-img">
+                    <h1>EcoSphere</h1>
+                </div>
+                <nav class="nav-links">
+                    <a href="#upload">Upload</a>
+                    <a href="#reports">Reports</a>
+                    <button id="viewHistoryBtn" class="view-history-btn">📊 View History</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <h1>Track. Clean. Sustain.</h1>
+                    <p>Join the mission to make our planet cleaner by tagging and tracking waste locations effortlessly.</p>
+
+                    <div class="hero-cta">
+                        <a class="btn btn-primary" href="#upload" title="Report now">📸 Report Now</a>
+                        <button id="heroHowBtn" class="btn" title="How it works">💡 How it works</button>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalReports">0</div>
+                            <div class="stat-label">Total Reports</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="inProgressReports">0</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="resolvedReports">0</div>
+                            <div class="stat-label">Resolved</div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Report Form Section -->
+                <section class="report-section" id="upload">
+                    <div class="card">
+                        <h2>📸 Report Garbage Location</h2>
+                        <p class="subtitle">Upload a photo - we'll automatically extract GPS data or use your device location</p>
+                        
+                        <form id="reportForm" class="report-form">
+                            <!-- Image Upload -->
+                            <div class="upload-container">
+                                <input type="file" id="imageInput" accept="image/*" class="file-input">
+                                <input type="file" id="cameraInput" accept="image/*" capture="user" class="file-input hidden">
+                                <div class="upload-options">
+                                    <label for="imageInput" class="upload-label">
+                                        <div class="upload-icon">📁</div>
+                                        <div class="upload-text">
+                                            <span class="upload-title">Choose or drag a photo</span>
+                                            <span class="upload-subtitle">PNG, JPG, GIF (max 10MB)</span>
+                                        </div>
+                                    </label>
+                                    <button type="button" id="cameraBtn" class="btn btn-primary camera-btn">
+                                        <span class="btn-icon" style="font-size: 3rem;">📷</span>
+                                        <span>Take Photo with Camera</span>
+                                    </button>
+                                </div>
+                                <div id="imagePreview" class="image-preview hidden"></div>
+                            </div>
+
+                            <!-- Location Section -->
+                            <div class="location-section">
+                                <button type="button" id="getLocationBtn" class="btn btn-primary">
+                                    <span class="btn-icon">📍</span>
+                                    Get My Location
+                                </button>
+                                <div id="locationStatus" class="location-status"></div>
+                                <div id="locationInfo" class="location-info hidden">
+                                    <div class="location-header">
+                                        <h4>📍 Location Details</h4>
+                                        
+                                        <button type="button" id="editLocationBtn" class="btn-edit" title="Edit location manually">
+                                            <span>✏️</span> Edit
+                                        </button>
+                                    </div>
+                                    <div id="locationDisplay" class="location-display">
+                                        <div class="location-item">
+                                            <span class="label">Latitude:</span>
+                                            <span id="latitude" class="value">-</span>
+                                        </div>
+                                        <div class="location-item">
+                                            <span class="label">Longitude:</span>
+                                            <span id="longitude" class="value">-</span>
+                                        </div>
+                                    </div>
+                                    <div id="locationEdit" class="location-edit hidden">
+                                        <div class="form-group">
+                                            <label for="manualLatitude">Latitude:</label>
+                                            <input type="number" id="manualLatitude" step="any" class="input-field" placeholder="e.g., 28.6139">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="manualLongitude">Longitude:</label>
+                                            <input type="number" id="manualLongitude" step="any" class="input-field" placeholder="e.g., 77.2090">
+                                        </div>
+                                        <div class="edit-actions">
+                                            <button type="button" id="saveLocationBtn" class="btn btn-primary">Save</button>
+                                            <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+                                        </div>
+                                    </div>
+                                    <div id="mapLinkContainer" class="map-link-container hidden"></div>
+                                    <div id="municipalInfo" class="municipal-info hidden">
+                                        <div class="municipal-header">
+                                            <span class="municipal-icon">🏛️</span>
+                                            <h4>Nearest Municipal Authority</h4>
+                                        </div>
+                                        <div id="municipalDetails" class="municipal-details"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Details -->
+                            <div class="form-group">
+                                <label for="description">Additional Notes (Optional)</label>
+                                <textarea id="description" class="textarea" rows="3" placeholder="Add any details about this location..."></textarea>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="submitBtn" class="btn btn-submit" disabled>
+                                <span class="btn-icon">✓</span>
+                                Submit Report
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Reports List Section -->
+                <section class="reports-section" id="reports">
+                    <div class="section-header">
+                        <h2>📋 All Reports</h2>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-status="all">All</button>
+                            <button class="filter-btn" data-status="reported">Reported</button>
+                            <button class="filter-btn" data-status="in-progress">In Progress</button>
+                            <button class="filter-btn" data-status="resolved">Resolved</button>
+                        </div>
+                    </div>
+                    <div id="reportsList" class="reports-list">
+                        <div class="empty-state">
+                            <div class="empty-icon">🌿</div>
+                            <p>No reports yet. Be the first to help keep our planet clean!</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>EcoSphere - Simple tools for a cleaner planet</p>
+                <p class="copyright">&copy; 2025 EcoSphere. Made with care for a sustainable future.</p>
+            </div>
+        </footer>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-icon">✓</div>
+                <h3>Report Submitted!</h3>
+                <p>Thank you for helping keep our planet clean. Your report has been saved.</p>
+                <button id="closeModal" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Config and libraries -->
+    <script src="config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+
+    <!-- App script -->
+    <script src="script.js"></script>
+
+    <script>
+        // Show app when splash is clicked or button pressed
+        function showApp() {
+            const splash = document.getElementById('splash');
+            const app = document.getElementById('app');
+            if(!splash || !app) return;
+            splash.classList.add('splash-hidden');
+            // Wait for transition then hide overlay and reveal app to screen readers
+            setTimeout(() => {
+                splash.style.display = 'none';
+                app.removeAttribute('aria-hidden');
+            }, 320);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logo = document.getElementById('splashLogo');
+            const enterBtn = document.getElementById('enterBtn');
+            if (logo) {
+                logo.addEventListener('click', showApp);
+                logo.addEventListener('keydown', (e) => { if (e.key === 'Enter') showApp(); });
+            }
+            if (enterBtn) enterBtn.addEventListener('click', showApp);
+
+            // Optional: if user has ?skipSplash=1 in URL, auto-show app
+            try {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('skipSplash') === '1') showApp();
+            } catch (e) {}
+        });
+    </script>
+</body>
+</html>
+

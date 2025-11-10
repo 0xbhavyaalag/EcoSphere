@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Garbage Tracker - Smart Waste Management & Location Tracking System">
+    <title>EcoSphere - Smart Waste Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Configuration File - Load first -->
+    <script src="config.js"></script>
+    <!-- EXIF library for GPS extraction from images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png" />
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="container">
+            <div class="logo">
+                <img src="iner.png" alt="EcoSphere logo" class="logo-img">
+                <h1>EcoSphere</h1>
+            </div>
+            <nav class="nav-links">
+                <a href="#upload">Upload</a>
+                <a href="#reports">Reports</a>
+                <button id="viewHistoryBtn" class="view-history-btn">📊 View History</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <h1>Track. Clean. Sustain.</h1>
+                <p>Join the mission to make our planet cleaner by tagging and tracking waste locations effortlessly.</p>
+
+                <div class="hero-cta">
+                    <a class="btn btn-primary" href="#upload" title="Report now">📸 Report Now</a>
+                    <button id="heroHowBtn" class="btn" title="How it works">💡 How it works</button>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalReports">0</div>
+                        <div class="stat-label">Total Reports</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="inProgressReports">0</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="resolvedReports">0</div>
+                        <div class="stat-label">Resolved</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Report Form Section -->
+            <section class="report-section" id="upload">
+                <div class="card">
+                    <h2>📸 Report Garbage Location</h2>
+                    <p class="subtitle">Upload a photo - we'll automatically extract GPS data or use your device location</p>
+                    
+                    <form id="reportForm" class="report-form">
+                        <!-- Image Upload -->
+                        <div class="upload-container">
+                            <input type="file" id="imageInput" accept="image/*" class="file-input">
+                            <input type="file" id="cameraInput" accept="image/*" capture="user" class="file-input hidden">
+                            <div class="upload-options">
+                                <label for="imageInput" class="upload-label">
+                                    <div class="upload-icon">📁</div>
+                                    <div class="upload-text">
+                                        <span class="upload-title">Choose or drag a photo</span>
+                                        <span class="upload-subtitle">PNG, JPG, GIF (max 10MB)</span>
+                                    </div>
+                                </label>
+                                <button type="button" id="cameraBtn" class="btn btn-primary camera-btn">
+                                    <span class="btn-icon" style="font-size: 3rem;">📷</span>
+                                    <span>Take Photo with Camera</span>
+                                </button>
+                            </div>
+                            <div id="imagePreview" class="image-preview hidden"></div>
+                        </div>
+
+                        <!-- Location Section -->
+                        <div class="location-section">
+                            <button type="button" id="getLocationBtn" class="btn btn-primary">
+                                <span class="btn-icon">📍</span>
+                                Get My Location
+                            </button>
+                            <div id="locationStatus" class="location-status"></div>
+                            <div id="locationInfo" class="location-info hidden">
+                                <div class="location-header">
+                                    <h4>📍 Location Details</h4>
+                                    
+                                    <button type="button" id="editLocationBtn" class="btn-edit" title="Edit location manually">
+                                        <span>✏️</span> Edit
+                                    </button>
+                                </div>
+                                <div id="locationDisplay" class="location-display">
+                                    <div class="location-item">
+                                        <span class="label">Latitude:</span>
+                                        <span id="latitude" class="value">-</span>
+                                    </div>
+                                    <div class="location-item">
+                                        <span class="label">Longitude:</span>
+                                        <span id="longitude" class="value">-</span>
+                                    </div>
+                                </div>
+                                <div id="locationEdit" class="location-edit hidden">
+                                    <div class="form-group">
+                                        <label for="manualLatitude">Latitude:</label>
+                                        <input type="number" id="manualLatitude" step="any" class="input-field" placeholder="e.g., 28.6139">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="manualLongitude">Longitude:</label>
+                                        <input type="number" id="manualLongitude" step="any" class="input-field" placeholder="e.g., 77.2090">
+                                    </div>
+                                    <div class="edit-actions">
+                                        <button type="button" id="saveLocationBtn" class="btn btn-primary">Save</button>
+                                        <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+                                    </div>
+                                </div>
+                                <div id="mapLinkContainer" class="map-link-container hidden"></div>
+                                <div id="municipalInfo" class="municipal-info hidden">
+                                    <div class="municipal-header">
+                                        <span class="municipal-icon">🏛️</span>
+                                        <h4>Nearest Municipal Authority</h4>
+                                    </div>
+                                    <div id="municipalDetails" class="municipal-details"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Details -->
+                        <div class="form-group">
+                            <label for="description">Additional Notes (Optional)</label>
+                            <textarea id="description" class="textarea" rows="3" placeholder="Add any details about this location..."></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn" class="btn btn-submit" disabled>
+                            <span class="btn-icon">✓</span>
+                            Submit Report
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Reports List Section -->
+            <section class="reports-section" id="reports">
+                <div class="section-header">
+                    <h2>📋 All Reports</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-status="all">All</button>
+                        <button class="filter-btn" data-status="reported">Reported</button>
+                        <button class="filter-btn" data-status="in-progress">In Progress</button>
+                        <button class="filter-btn" data-status="resolved">Resolved</button>
+                    </div>
+                </div>
+                <div id="reportsList" class="reports-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">🌿</div>
+                        <p>No reports yet. Be the first to help keep our planet clean!</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>EcoSphere - Simple tools for a cleaner planet</p>
+            <p class="copyright">&copy; 2025 EcoSphere. Made with care for a sustainable future.</p>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <h3>Report Submitted!</h3>
+            <p>Thank you for helping keep our planet clean. Your report has been saved.</p>
+            <button id="closeModal" class="btn btn-primary">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
